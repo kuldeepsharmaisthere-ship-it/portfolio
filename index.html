@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuldeep Sharma — AI/ML Learner & Software Developer</title>
+  <meta name="description" content="Portfolio of Kuldeep Sharma — B.Tech student at IIIT Dharwad. AI/ML Learner, Software Developer, Photographer, and UI/UX Enthusiast.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" href="/favicon.svg">
+  <meta name="theme-color" content="#090514">
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Kuldeep Sharma — AI/ML Learner & Software Developer">
+  <meta property="og:description" content="Portfolio of Kuldeep Sharma — B.Tech student at IIIT Dharwad. AI/ML Learner, Software Developer, Photographer, and UI/UX Enthusiast.">
+  <meta property="og:image" content="/kuldeep_profile.jpg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kuldeep Sharma — AI/ML Learner & Software Developer">
+  <meta name="twitter:description" content="Portfolio of Kuldeep Sharma — B.Tech student at IIIT Dharwad. AI/ML Learner, Software Developer, Photographer, and UI/UX Enthusiast.">
+  <meta name="twitter:image" content="/kuldeep_profile.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles/main.css">
+</head>
+<body class="synthwave-theme">
+  <!-- Scanline overlay -->
+  <div class="crt-overlay"></div>
+
+  <!-- FIXED FULLSCREEN 3D WEBGL BACKGROUND -->
+  <div id="webgl-container" class="webgl-fullscreen-mount"></div>
+
+  <!-- Landmark Tooltip -->
+  <div class="landmark-tooltip" id="landmarkTooltip">
+    <div class="tooltip-badge">LANDMARK DETECTED</div>
+    <div class="tooltip-title" id="tooltipTitle"></div>
+    <div class="tooltip-desc" id="tooltipDesc">Click to explore</div>
+  </div>
+
+  <!-- FLOATING HUD: Bottom Left -->
+  <div class="floating-hud-bottom-left" id="hudControls">
+    <div class="hud-box">
+      <button class="hud-control-btn active" id="hudRotateBtn" title="Toggle Auto-Orbit">
+        <svg class="hud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.8 1.03 6.44 2.7L21 8"></path><path d="M21 3v5h-5"></path></svg>
+        <span class="hud-label">Rotate</span>
+      </button>
+      <button class="hud-control-btn" id="hudPanBtn" title="Pan Camera">
+        <svg class="hud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 9-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"></path></svg>
+        <span class="hud-label">Pan</span>
+      </button>
+      <button class="hud-control-btn" id="hudZoomBtn" title="Zoom">
+        <svg class="hud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35M11 8v6M8 11h6"></path></svg>
+        <span class="hud-label">Zoom</span>
+      </button>
+      <button class="hud-control-btn" id="hudResetBtn" title="Reset View">
+        <svg class="hud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
+        <span class="hud-label">Reset</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- FLOATING HUD: Bottom Right Gizmo -->
+  <div class="floating-hud-bottom-right" id="hudGizmoWrapper">
+    <div class="gizmo-box">
+      <canvas id="gizmo-canvas" width="100" height="100"></canvas>
+      <div class="gizmo-labels">
+        <span class="axis-lbl x-lbl">X</span>
+        <span class="axis-lbl y-lbl">Y</span>
+        <span class="axis-lbl z-lbl">Z</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIXED HEADER -->
+  <header class="global-header">
+    <div class="header-left">
+      <a href="#home" class="brand-logo">
+        <span class="brand-glitch">KULDEEP SHARMA</span>
+        <span class="brand-sub">// AI/ML · SOFTWARE DEV · PHOTOGRAPHER</span>
+      </a>
+    </div>
+
+    <nav class="orbit-track-nav" aria-label="Navigation">
+      <div class="track-line">
+        <div class="track-progress" id="trackProgress"></div>
+        <div class="track-orb" id="trackOrb"><div class="orb-pulse"></div></div>
+      </div>
+      <div class="track-points">
+        <a href="#home" class="track-point active" data-section="home"><span class="point-dot"></span><span class="point-label">HOME</span></a>
+        <a href="#about" class="track-point" data-section="about"><span class="point-dot"></span><span class="point-label">ABOUT</span></a>
+        <a href="#skills" class="track-point" data-section="skills"><span class="point-dot"></span><span class="point-label">TECH STACK</span></a>
+        <a href="#projects" class="track-point" data-section="projects"><span class="point-dot"></span><span class="point-label">PROJECTS</span></a>
+        <a href="#experience" class="track-point" data-section="experience"><span class="point-dot"></span><span class="point-label">EXPERIENCE</span></a>
+        <a href="#creative" class="track-point" data-section="creative"><span class="point-dot"></span><span class="point-label">CREATIVE</span></a>
+        <a href="#achievements" class="track-point" data-section="achievements"><span class="point-dot"></span><span class="point-label">WINS</span></a>
+        <a href="#education" class="track-point" data-section="education"><span class="point-dot"></span><span class="point-label">EDU</span></a>
+        <a href="#contact" class="track-point" data-section="contact"><span class="point-dot"></span><span class="point-label">CONTACT</span></a>
+      </div>
+    </nav>
+
+    <div class="header-right">
+      <button class="header-btn sound-toggle" id="soundToggle">
+        <span id="soundIcon">🔇</span>
+        <span id="soundText">SFX</span>
+      </button>
+      <button class="header-btn terminal-trigger" id="terminalOpenBtn">
+        <span class="term-prompt">&gt;_</span>
+        <span>CLI</span>
+      </button>
+      <a href="#contact" class="header-btn cta-btn">HIRE ME</a>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-content-wrapper">
+
+    <!-- 0. HOME / HERO -->
+    <section id="home" class="hero-full-section">
+      <div class="hero-inner-container">
+        <!-- Grand Liquid Hero Card -->
+        <div class="hero-liquid-card reveal">
+          
+          <!-- Left Column: Identity, Bios & Actions -->
+          <div class="hero-text-col">
+            <div class="hero-status-pill">
+              <span class="status-pulse-dot"></span>
+              <span class="status-text">AVAILABLE FOR ROLES &amp; COLLABORATIONS</span>
+            </div>
+
+            <div class="hero-role-tag">// CREATIVE TECHNOLOGIST &amp; DEVELOPER ENGINEER</div>
+
+            <h1 class="hero-name">Kuldeep Sharma</h1>
+
+            <div class="hero-titles-cycling">
+              <span class="cycling-prefix">&gt;</span>
+              <span class="cycling-pill">
+                <span class="cycling-text" id="cyclingTitle">AI/ML Learner</span>
+                <span class="cycling-cursor">|</span>
+              </span>
+            </div>
+
+            <p class="hero-tagline">
+              B.Tech student at <span class="hl-cyan">IIIT Dharwad</span> specializing in Artificial Intelligence, Machine Learning, and full-stack software development. Crafting high-performance intelligent systems fused with visual storytelling and user-centered design.
+            </p>
+
+            <div class="hero-highlights-row">
+              <div class="highlight-chip">
+                <span class="chip-icon">🏆</span>
+                <span class="chip-text"><strong>Runner-Up</strong> · Abhisarga Hackathon</span>
+              </div>
+              <div class="highlight-chip">
+                <span class="chip-icon">🏛️</span>
+                <span class="chip-text"><strong>President</strong> · Iridescence Club</span>
+              </div>
+              <div class="highlight-chip">
+                <span class="chip-icon">🎓</span>
+                <span class="chip-text"><strong>IIIT Dharwad</strong> · Class of 2028</span>
+              </div>
+            </div>
+
+            <div class="hero-cta-actions">
+              <a href="#projects" class="hero-primary-btn">
+                <span>VIEW PROJECTS</span>
+                <span class="btn-arrow">↗</span>
+              </a>
+              <a href="#contact" class="hero-secondary-btn">
+                <span>GET IN TOUCH</span>
+                <span class="btn-arrow">▷</span>
+              </a>
+              <button class="hero-cli-btn" id="heroCliBtn">
+                <span class="cli-icon">&gt;_</span>
+                <span>TERMINAL</span>
+              </button>
+            </div>
+
+            <div class="hero-social-strip">
+              <span class="social-strip-label">DIRECT CHANNELS:</span>
+              <div class="hero-social-links">
+                <a href="https://github.com/kuldeepsharmaisthere" target="_blank" rel="noopener" class="social-icon-btn" title="GitHub">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  <span>GitHub</span>
+                </a>
+                <a href="https://linkedin.com/in/kuldeepsharmaisthere" target="_blank" rel="noopener" class="social-icon-btn" title="LinkedIn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                  <span>LinkedIn</span>
+                </a>
+                <a href="mailto:kuldeepsharmaisthere@gmail.com" class="social-icon-btn" title="Email">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  <span>Email</span>
+                </a>
+                <a href="https://wa.me/916301647191" target="_blank" rel="noopener" class="social-icon-btn whatsapp-btn" title="WhatsApp">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Grand Liquid Holographic Portrait Showcase -->
+          <div class="hero-photo-showcase">
+            <div class="liquid-portrait-card">
+              <div class="liquid-portrait-glass">
+                <img src="/kuldeep_profile.jpg" alt="Kuldeep Sharma" class="liquid-portrait-img" id="heroPhoto">
+                <div class="portrait-specular-sheen"></div>
+              </div>
+              <div class="portrait-holo-badge top-right">
+                <span class="badge-dot-green"></span>
+                <span>IIIT DHARWAD</span>
+              </div>
+              <div class="portrait-holo-badge bottom-left">
+                <span class="badge-dot-cyan"></span>
+                <span>AI / ML · DEV · CREATIVE</span>
+              </div>
+              <div class="portrait-card-border-glow"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Scroll Down Cue -->
+        <div class="scroll-prompt-indicator reveal">
+          <div class="mouse-icon"><div class="mouse-wheel"></div></div>
+          <span class="prompt-text">SCROLL TO NAVIGATE THE 3D WORLD</span>
+          <span class="prompt-arrow">▼</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. ABOUT -->
+    <section id="about" class="content-section">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-subtitle">// WHO I AM</div>
+          <h2 class="section-title">ABOUT ME</h2>
+        </div>
+        <div class="about-layout reveal">
+          <div class="about-photo-side">
+            <div class="about-photo-card liquid-card">
+              <div class="about-photo-frame">
+                <img src="/kuldeep_profile.jpg" alt="Kuldeep Sharma" class="about-photo">
+                <div class="about-photo-badge">
+                  <span class="badge-dot"></span>
+                  <span>Open to Opportunities</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="about-text-side liquid-card">
+            <p class="about-bio">
+              B.Tech student at <span class="hl-cyan">Indian Institute of Information Technology Dharwad</span> with a strong interest in Artificial Intelligence, Machine Learning, software development, and creative technology.
+            </p>
+            <p class="about-bio" style="margin-top: 14px;">
+              I enjoy building practical software and AI-driven applications while combining technical work with <span class="hl-pink">photography, videography, graphic design, and UI/UX</span> — because great engineering and great design go hand in hand.
+            </p>
+            <div class="about-quick-facts">
+              <div class="fact-chip"><span class="fact-icon">🎓</span><span>B.Tech @ IIIT Dharwad</span></div>
+              <div class="fact-chip"><span class="fact-icon">📍</span><span>Dharwad, Karnataka</span></div>
+              <div class="fact-chip"><span class="fact-icon">🤖</span><span>AI/ML Learner</span></div>
+              <div class="fact-chip"><span class="fact-icon">🏆</span><span>Hackathon Runner-Up</span></div>
+              <div class="fact-chip"><span class="fact-icon">📷</span><span>Club President</span></div>
+              <div class="fact-chip"><span class="fact-icon">💡</span><span>Creative Technologist</span></div>
+            </div>
+            <div class="about-actions">
+              <a href="https://github.com/kuldeepsharmaisthere" target="_blank" rel="noopener" class="polygon-nav-btn btn-primary">
+                <span>VIEW GITHUB</span><span class="btn-arrow">↗</span>
+              </a>
+              <a href="#contact" class="polygon-nav-btn btn-secondary">
+                <span>CONTACT ME</span><span class="btn-arrow">▷</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TECH STACK (formerly Skills) -->
+    <section id="skills" class="content-section alternate-bg">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-subtitle">// CORE TECHNOLOGIES &amp; TOOLING</div>
+          <h2 class="section-title">TECH STACK</h2>
+        </div>
+        <div class="skills-grid reveal" id="skillsGrid"></div>
+      </div>
+    </section>
+
+    <!-- 3. PROJECTS -->
+    <section id="projects" class="content-section">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-subtitle">// SELECTED ENGINEERING WORK</div>
+          <h2 class="section-title">PROJECTS</h2>
+        </div>
+        <div class="project-filters reveal">
+          <button class="filter-btn active" data-filter="all">ALL</button>
+          <button class="filter-btn" data-filter="ai">AI / ML</button>
+          <button class="filter-btn" data-filter="systems">SYSTEMS</button>
+        </div>
+        <div class="projects-grid" id="projectsGrid"></div>
+      </div>
+    </section>
+
+    <!-- 4. EXPERIENCE / LEADERSHIP -->
+    <section id="experience" class="content-section alternate-bg">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-subtitle">// LEADERSHIP & CAMPUS INVOLVEMENT</div>
+          <h2 class="section-title">EXPERIENCE</h2>
+        </div>
+        <div class="experience-container reveal" id="experienceContainer"></div>
+      </div>
+    </section>
+
+    <!-- 5. CREATIVE -->
+    <section id="creative" class="content-section">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-subtitle">// BEYOND CODE — CREATIVE PURSUITS</div>
+          <h2 class="section-title">CREATIVE</h2>
+        </div>
+        <div class="creative-grid reveal" id="creativeGrid"></div>
+      </div>
+    </section>
+
+    <!-- 6. ACHIEVEMENTS -->
+    <section id="achievements" class="content-section alternate-bg">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-subtitle">// MILESTONES & RECOGNITION</div>
+          <h2 class="section-title">ACHIEVEMENTS</h2>
+        </div>
+        <div class="achievements-list reveal" id="achievementsList"></div>
+      </div>
+    </section>
+
+    <!-- 7. EDUCATION -->
+    <section id="education" class="content-section">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-subtitle">// ACADEMIC BACKGROUND</div>
+          <h2 class="section-title">EDUCATION</h2>
+        </div>
+        <div class="education-container reveal" id="educationContainer"></div>
+      </div>
+    </section>
+
+    <!-- 8. CONTACT -->
+    <section id="contact" class="content-section alternate-bg">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-subtitle">// GET IN TOUCH — I'M OPEN TO WORK</div>
+          <h2 class="section-title">CONTACT ME</h2>
+        </div>
+        <div class="contact-deck-wrapper reveal">
+          <!-- Direct Channels -->
+          <div class="contact-channels">
+            <div class="contact-channel-title">// DIRECT TRANSMISSION CHANNELS</div>
+
+            <a href="mailto:kuldeepsharmaisthere@gmail.com" class="contact-channel-card gmail-card">
+              <div class="channel-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </div>
+              <div class="channel-info">
+                <div class="channel-label">EMAIL — CLICK TO OPEN GMAIL</div>
+                <div class="channel-value">kuldeepsharmaisthere@gmail.com</div>
+              </div>
+              <span class="channel-arrow">↗</span>
+            </a>
+
+            <a href="https://wa.me/916301647191?text=Hi%20Kuldeep%2C%20I%20saw%20your%20portfolio%20and%20wanted%20to%20connect!" target="_blank" rel="noopener" class="contact-channel-card whatsapp-card">
+              <div class="channel-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+              </div>
+              <div class="channel-info">
+                <div class="channel-label">WHATSAPP — CLICK TO MESSAGE ME</div>
+                <div class="channel-value">+91 6301647191</div>
+              </div>
+              <span class="channel-arrow">↗</span>
+            </a>
+
+            <a href="tel:+916301647191" class="contact-channel-card phone-card">
+              <div class="channel-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              <div class="channel-info">
+                <div class="channel-label">PHONE — CLICK TO CALL</div>
+                <div class="channel-value">+91 6301647191</div>
+              </div>
+              <span class="channel-arrow">↗</span>
+            </a>
+
+            <a href="https://github.com/kuldeepsharmaisthere" target="_blank" rel="noopener" class="contact-channel-card github-card">
+              <div class="channel-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              </div>
+              <div class="channel-info">
+                <div class="channel-label">GITHUB — VIEW MY CODE</div>
+                <div class="channel-value">github.com/kuldeepsharmaisthere</div>
+              </div>
+              <span class="channel-arrow">↗</span>
+            </a>
+
+            <a href="https://linkedin.com/in/kuldeepsharmaisthere" target="_blank" rel="noopener" class="contact-channel-card linkedin-card">
+              <div class="channel-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+              </div>
+              <div class="channel-info">
+                <div class="channel-label">LINKEDIN — CONNECT WITH ME</div>
+                <div class="channel-value">linkedin.com/in/kuldeepsharmaisthere</div>
+              </div>
+              <span class="channel-arrow">↗</span>
+            </a>
+          </div>
+
+          <!-- Contact Form -->
+          <form class="contact-form-cyber" id="contactForm">
+            <div class="form-group">
+              <label for="contactName">YOUR NAME</label>
+              <input type="text" id="contactName" name="name" placeholder="e.g. Recruiter Name" required>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">YOUR EMAIL</label>
+              <input type="email" id="contactEmail" name="email" placeholder="you@company.com" required>
+            </div>
+            <div class="form-group">
+              <label for="contactSubject">SUBJECT</label>
+              <select id="contactSubject" name="subject">
+                <option value="internship">Internship Opportunity</option>
+                <option value="project">Project Collaboration</option>
+                <option value="hire">Full-time Role</option>
+                <option value="creative">Creative Work</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="contactMessage">MESSAGE</label>
+              <textarea id="contactMessage" name="message" rows="4" placeholder="Tell me about your project or opportunity..." required></textarea>
+            </div>
+            <button type="submit" class="submit-transmission-btn" id="submitBtn">
+              <span class="btn-text">SEND MESSAGE ▷▷</span>
+            </button>
+            <div class="form-status" id="formStatus"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="global-footer">
+      <div class="footer-container">
+        <div class="footer-left">
+          <span class="footer-brand">KULDEEP SHARMA</span>
+          <span class="footer-copy">© 2026 · IIIT Dharwad · Built with Three.js</span>
+        </div>
+        <div class="footer-right">
+          <a href="#home" class="back-to-top">RETURN TO TOP ▲</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Terminal Modal -->
+  <div class="terminal-modal" id="terminalModal" role="dialog" aria-modal="true">
+    <div class="terminal-window">
+      <div class="terminal-titlebar">
+        <div class="terminal-dots">
+          <span class="term-dot close" id="termCloseBtn"></span>
+          <span class="term-dot minimize"></span>
+          <span class="term-dot maximize" id="termMaxBtn"></span>
+        </div>
+        <div class="term-title">kuldeep@iiit-dharwad: ~ bash</div>
+        <div class="term-help-hint">Type 'help' for commands</div>
+      </div>
+      <div class="terminal-output" id="terminalOutput">
+        <div class="term-line banner">KULDEEP SHARMA — IIIT DHARWAD
+═══════════════════════════════════════════════
+Type <span class="hl-cyan">'help'</span> · <span class="hl-pink">'projects'</span> · <span class="hl-amber">'contact'</span></div>
+      </div>
+      <div class="terminal-input-row">
+        <span class="term-prompt-sign">kuldeep@iiit:~$</span>
+        <input type="text" id="terminalInput" class="term-input" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+  </div>
+
+  <!-- Dossier Modal -->
+  <div class="dossier-modal" id="dossierModal" role="dialog" aria-modal="true">
+    <div class="dossier-backdrop" id="dossierBackdrop"></div>
+    <div class="dossier-card">
+      <button class="dossier-close" id="dossierCloseBtn">✕</button>
+      <div class="dossier-header">
+        <span class="dossier-tag" id="dossierTag">CASE STUDY</span>
+        <h3 class="dossier-title" id="dossierTitle"></h3>
+        <div class="dossier-meta" id="dossierMeta"></div>
+      </div>
+      <div class="dossier-body" id="dossierBody"></div>
+      <div class="dossier-footer">
+        <div class="dossier-tech-tags" id="dossierTechTags"></div>
+        <div class="dossier-actions" id="dossierActions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
